@@ -1,4 +1,5 @@
 const { ApolloServer } = require("apollo-server");
+const isEmail = require("isemail");
 
 const typeDefs = require("./schema");
 
@@ -19,6 +20,24 @@ const store = createStore();
 //and our UserAPI data source to connect our SQL database, we need to add them to our graph API.
 
 const server = new ApolloServer({
+  //   The context function on your ApolloServer instance is called with the request object
+  // each time a GraphQL operation hits your API. Use this request object to read
+  //the authorization headers.
+  // Authenticate the user within the context function.
+  // Once the user is authenticated, attach the user to the object returned
+  //from the context function. This allows us to read the user's information 
+  //from within our data sources and resolvers, so we can authorize whether they can access the data.
+  context: async ({ req }) => {
+    // simple auth check on every request
+    const auth = (req.headers && req.headers.authorization) || "";
+    const email = Buffer.from(auth, "base64").toString("ascii");
+    if (!isEmail.validate(email)) return { user: null };
+    // find a user by their email
+    const users = await store.users.findOrCreate({ where: { email } });
+    const user = (users && users[0]) || null;
+
+    return { user: { ...user.dataValues } };
+  },
   typeDefs,
 
   resolvers,
