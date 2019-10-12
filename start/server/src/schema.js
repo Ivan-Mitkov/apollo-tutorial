@@ -1,8 +1,9 @@
-const { gql } = require('apollo-server');
+const { gql } = require("apollo-server");
 
 const typeDefs = gql`
+  #PAGINATION
   type Query {
-    launches(
+    launches( # replace the current launches query with this one.
       """
       The number of results to show. Must be >= 1. Default = 20
       """
@@ -25,22 +26,20 @@ const typeDefs = gql`
 
     login(email: String): String # login token
   }
-
-  type TripUpdateResponse {
-    success: Boolean!
-    message: String
-    launches: [Launch]
-  }
-
   """
   Simple wrapper around our list of launches that contains a cursor to the
   last item in the list. Pass this cursor to the launches query to fetch results
   after these.
   """
-  type LaunchConnection {
+  type LaunchConnection { # add this below the Query type as an additional type.
     cursor: String!
     hasMore: Boolean!
     launches: [Launch]!
+  }
+  type TripUpdateResponse {
+    success: Boolean!
+    message: String
+    launches: [Launch]
   }
 
   type Launch {
@@ -65,7 +64,7 @@ const typeDefs = gql`
 
   type Mission {
     name: String
-    missionPatch(size: PatchSize): String
+    missionPatch(mission: String, size: PatchSize): String
   }
 
   enum PatchSize {
