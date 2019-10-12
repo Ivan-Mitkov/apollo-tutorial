@@ -1,6 +1,10 @@
 const { DataSource } = require('apollo-datasource');
 const isEmail = require('isemail');
-
+// Apollo doesn't have support for a SQL data source yet 
+//(although we'd love to help guide you if you're interested in contributing), 
+//so we will need to create a custom data source for our database 
+//by extending the generic Apollo data source class. 
+//You can create your own with the apollo-datasource package.
 class UserAPI extends DataSource {
   constructor({ store }) {
     super();
@@ -13,7 +17,12 @@ class UserAPI extends DataSource {
    * like caches and context. We'll assign this.context to the request context
    * here, so we can know about the user making requests
    */
+  // The initialize method: You'll need to implement this method 
+  //if you want to pass in any configuration options to your class.
+  // Here, we're using this method to access our graph API's context.
   initialize(config) {
+    // this.context: A graph API's context is an object 
+    //that's shared among every resolver in a GraphQL request.
     this.context = config.context;
   }
 
