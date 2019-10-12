@@ -2,68 +2,55 @@ import React, { Fragment } from "react";
 import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
-import { LaunchTile, Header, Button, Loading } from "../components";
+import { Loading, Header, LaunchDetail } from "../components";
+import { ActionButton } from "../containers";
+import { LAUNCH_TILE_DATA } from './launches';
 
-const GET_LAUNCHES = gql`
-  query launchList($after: String) {
-    launches(after: $after) {
-      cursor
-      hasMore
-      launches {
-        id
-        isBooked
-        rocket {
-          id
-          name
-        }
-        mission {
-          name
-          missionPatch
-        }
+// export const GET_LAUNCH_DETAILS = gql`
+//   query LaunchDetails($launchId: ID!) {
+//     launch(id: $launchId) {
+//       id
+//       site
+//       isBooked
+//       rocket {
+//         id
+//         name
+//         type
+//       }
+//       mission {
+//         name
+//         missionPatch
+//       }
+//     }
+//   }
+// `;
+export const GET_LAUNCH_DETAILS = gql`
+  query LaunchDetails($launchId: ID!) {
+    launch(id: $launchId) {
+      site
+      rocket {
+        type
       }
+      ...LaunchTile
     }
   }
-`;
-export default function Launches() {
-  // To build a paginated list with Apollo, we first need to destructure the fetchMore
-  //function from the useQuery result object:
-  const { data, loading, error, fetchMore } = useQuery(GET_LAUNCHES);
+  
+${LAUNCH_TILE_DATA}`;
+
+export default function Launch({ launchId }) {
+  const { data, loading, error } = useQuery(GET_LAUNCH_DETAILS, {
+    variables: { launchId }
+  });
   if (loading) return <Loading />;
-  if (error) return <p>ERROR</p>;
+  if (error) return <p>ERROR: {error.message}</p>;
 
   return (
     <Fragment>
-      <Header />
-      {data.launches && data.launches.hasMore && (
-        <Button
-        // Now that we have fetchMore, let's connect it to a Load More button 
-        //to fetch more items when it's clicked. To do this, we will need to specify
-        // an updateQuery function on the return object from fetchMore
-        // that tells the Apollo cache how to update our query with the new items we're fetching.
-          onClick={() =>
-            fetchMore({
-              variables: {
-                after: data.launches.cursor
-              },
-              updateQuery: (prev, { fetchMoreResult, ...rest }) => {
-                if (!fetchMoreResult) return prev;
-                return {
-                  ...fetchMoreResult,
-                  launches: {
-                    ...fetchMoreResult.launches,
-                    launches: [
-                      ...prev.launches.launches,
-                      ...fetchMoreResult.launches.launches
-                    ]
-                  }
-                };
-              }
-            })
-          }
-        >
-          Load More
-        </Button>
-      )}
+      <Header image={data.launch.mission.missionPatch}>
+        {data.launch.mission.name}
+      </Header>
+      <LaunchDetail {...data.launch} />
+      <ActionButton {...data.launch} />
     </Fragment>
   );
 }
