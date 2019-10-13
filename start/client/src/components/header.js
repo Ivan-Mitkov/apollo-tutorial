@@ -34,7 +34,6 @@ export default function Header({ image, children = 'Space Explorer' }) {
 /**
  * STYLED COMPONENTS USED IN THIS FILE ARE BELOW HERE
  */
-
 const Container = styled('div')({
   display: 'flex',
   alignItems: 'center',

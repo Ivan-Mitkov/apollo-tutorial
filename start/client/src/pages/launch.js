@@ -27,6 +27,8 @@ import { LAUNCH_TILE_DATA } from './launches';
 export const GET_LAUNCH_DETAILS = gql`
   query LaunchDetails($launchId: ID!) {
     launch(id: $launchId) {
+      # // the resolver API on the client is the same as the resolver API on the server.
+      isInCart @client
       site
       rocket {
         type
