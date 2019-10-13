@@ -10,7 +10,15 @@ import Pages from './pages';
 
 const cache = new InMemoryCache();
 const link = new HttpLink({
-  uri: 'http://localhost:4000/'
+  uri: 'http://localhost:4000/',
+  // we need to attach our token to the GraphQL request's headers 
+  //so our server can authorize the user. 
+  headers: {
+    // Specifying the headers option on HttpLink allows us to read the token 
+    //from localStorage and attach it to the request's headers 
+    //each time a GraphQL operation is made.
+    authorization: localStorage.getItem('token'),
+  },
 });
 
 const client = new ApolloClient({
