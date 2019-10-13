@@ -4,7 +4,7 @@ import gql from "graphql-tag";
 
 import { Loading, Header, LaunchDetail } from "../components";
 import { ActionButton } from "../containers";
-import { LAUNCH_TILE_DATA } from './launches';
+import { LAUNCH_TILE_DATA } from "./launches";
 
 // export const GET_LAUNCH_DETAILS = gql`
 //   query LaunchDetails($launchId: ID!) {
@@ -36,8 +36,9 @@ export const GET_LAUNCH_DETAILS = gql`
       ...LaunchTile
     }
   }
-  
-${LAUNCH_TILE_DATA}`;
+
+  ${LAUNCH_TILE_DATA}
+`;
 
 export default function Launch({ launchId }) {
   const { data, loading, error } = useQuery(GET_LAUNCH_DETAILS, {

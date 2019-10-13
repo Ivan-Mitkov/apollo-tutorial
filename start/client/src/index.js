@@ -14,8 +14,10 @@ import { resolvers, typeDefs } from './resolvers';
 import Login from './pages/login';
 
 import Pages from './pages';
+import injectStyles from './styles';
 
 const cache = new InMemoryCache();
+
 const link = new HttpLink({
   uri: 'http://localhost:4000/',
   // we need to attach our token to the GraphQL request's headers 
@@ -26,14 +28,15 @@ const link = new HttpLink({
     //each time a GraphQL operation is made.
     authorization: localStorage.getItem('token'),
   },
-  //for local state
-  typeDefs,
-  resolvers,
+  
 });
 
 const client = new ApolloClient({
   cache,
-  link
+  link,
+  //for local state
+  typeDefs,
+  resolvers,
 });
 
 // client
@@ -76,7 +79,7 @@ function IsLoggedIn() {
   const { data } = useQuery(IS_LOGGED_IN);
   return data.isLoggedIn ? <Pages /> : <Login />;
 }
-
+injectStyles();
 ReactDOM.render(
     <ApolloProvider client={client}>
       <IsLoggedIn />

@@ -13,6 +13,7 @@ export const schema = gql`
   extend type Launch {
     isInCart: Boolean!
   }
+  
 `;
 
 // write a client schema and resolvers for your local data.
@@ -48,6 +49,12 @@ export const typeDefs = gql`
 //we either remove or add the cart item's id passed into the mutation to the list.
 // Finally, we return the updated list from the mutation.
 export const resolvers = {
+  Launch: {
+    isInCart: (launch, _, { cache }) => {
+      const { cartItems } = cache.readQuery({ query: GET_CART_ITEMS });
+      return cartItems.includes(launch.id);
+    },
+  },
   Mutation: {
     addOrRemoveFromCart: (_, { id }, { cache }) => {
       const { cartItems } = cache.readQuery({ query: GET_CART_ITEMS });

@@ -15,6 +15,7 @@ import injectStyles from './styles';
 // Set up our apollo-client to point at the server we created
 // this can be local or a remote endpoint
 const cache = new InMemoryCache();
+
 const client = new ApolloClient({
   cache,
   link: new HttpLink({
